@@ -102,16 +102,23 @@ def generate_rand_facts(code_max, M):
 
 def correct_rules(rules):
     conflict_list = []
+    for one_rule in range(len(rules)):
+        if 'and' in rules[one_rule]['if']:
+            rules[one_rule]['if']['and'].sort()
+        elif 'or' in rules[one_rule]['if']:
+            rules[one_rule]['if']['or'].sort()
+        elif 'not' in rules[one_rule]['if']:
+            rules[one_rule]['if']['not'].sort()
     for fir in range(len(rules)):
         for sec in range(fir+1, len(rules)):
             if 'and' in rules[fir]['if'] and 'and' in rules[sec]['if']:
-                if collections.Counter(rules[fir]['if']['and']) == collections.Counter(rules[sec]['if']['and']):
+                if rules[fir]['if']['and'] == rules[sec]['if']['and']:
                     conflict_list.append(fir)
             elif 'or' in rules[fir]['if'] and 'or' in rules[sec]['if']:
-                if collections.Counter(rules[fir]['if']['or']) == collections.Counter(rules[sec]['if']['or']):
+                if rules[fir]['if']['or'] == rules[sec]['if']['or']:
                     conflict_list.append(fir)
             elif 'not' in rules[fir]['if'] and 'not' in rules[sec]['if']:
-                if collections.Counter(rules[fir]['if']['not']) == collections.Counter(rules[sec]['if']['not']):
+                if rules[fir]['if']['not'] == rules[sec]['if']['not']:
                     conflict_list.append(fir)
     return conflict_list
 
@@ -133,7 +140,6 @@ conflict = correct_rules(rules)
 conflict.sort(reverse=True)
 print(conflict)
 result_facts = []
-print("%d facts validated vs %d rules in %f seconds" % (M, N, time() - time_start))
 for i in conflict:
     rules.pop(i)
 for one_rule in rules:
@@ -152,7 +158,7 @@ for one_rule in rules:
 
 
 # YOUR CODE HERE
-
+print("%d facts validated vs %d rules in %f seconds" % (M, N, time() - time_start))
 
 print(facts)
 print(result_facts)
